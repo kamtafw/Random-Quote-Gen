@@ -1,9 +1,8 @@
-import ulid
 from django.db import models
+from core.models import ULIDModel
 
 
-class Quote(models.Model):
-    id = models.CharField(primary_key=True, default=lambda: str(ulid.new()), editable=False, max_length=26)
+class Quote(ULIDModel):
     content = models.TextField()
     author = models.CharField(max_length=100, blank=True)
     category = models.CharField(max_length=50, blank=True)
