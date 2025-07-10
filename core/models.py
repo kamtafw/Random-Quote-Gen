@@ -1,5 +1,5 @@
 """
-ulid_wrapper.py - A wrapper for the ULID library to ensure compatibility with Django models.
+A wrapper for the ULID library to ensure compatibility with Django models.
 
 Key Features:
 * `generate_ulid()`: 26-char Base32 timestamp-sortable IDs.
