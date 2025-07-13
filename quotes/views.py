@@ -9,13 +9,18 @@ import random
 import hashlib
 import textwrap
 import datetime
+import cloudinary
+import cloudinary.api
+import cloudinary.uploader
 from io import BytesIO
+from cloudinary.exceptions import NotFound
 from PIL import Image, ImageDraw, ImageFont
 
 
 from .models import Quote, Tag
 from .filters import QuoteFilter
 from .serializers import QuoteSerializer, TagSerializer
+from core.utils.image_generator import generate_daily_image_with_unsplash
 
 
 class QuoteListCreateView(generics.ListCreateAPIView):
@@ -53,10 +58,6 @@ def daily_quote_view(request):
         return Response({"error": "No quotes available"}, status=404)
 
     # Selects a deterministic daily quote by hashing the current date
-    today = datetime.date.today().isoformat()
-    hash_input = f"{today}".encode("utf-8")
-    hash_value = hashlib.md5(hash_input).hexdigest()
-    index = int(hash_value, 16) % len(quote_ids)
     today = datetime.date.today().isoformat()
     hash_input = f"{today}".encode("utf-8")
     hash_value = hashlib.md5(hash_input).hexdigest()
@@ -138,3 +139,39 @@ def daily_quote_image_view(request):
     image_io.seek(0)
 
     return HttpResponse(image_io.getvalue(), content_type="image/png")
+
+
+@api_view(["GET"])
+def daily_quote_image_upload_view(request):
+    """
+    API view to upload the image of the daily quote.
+    """
+    today = datetime.date.today().isoformat()
+    public_id = f"daily-quote/daily_quote_{today}"
+
+    # Check if the image already exists in Cloudinary
+    try:
+        existing = cloudinary.api.resource(public_id, resource_type="image")
+        return Response({"image_url": existing["secure_url"], "reused": True})
+    except NotFound:
+        pass  # Proceed to generate new one
+
+    quote, buffer = generate_daily_image_with_unsplash()
+    if not quote:
+        return Response({"detail": "No quotes available."}, status=500)
+
+    # Upload the image to Cloudinary
+    try:
+        cloudinary_response = cloudinary.uploader.upload(buffer, public_id=public_id, overwrite=True, resource_type="image")
+        image_url = cloudinary_response.get("secure_url")
+        return Response(
+            {
+                "quote": quote.content,
+                "author": quote.author,
+                "tags": [t.name for t in quote.tags.all()],
+                "image_url": image_url,
+                "reused": False,
+            },
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

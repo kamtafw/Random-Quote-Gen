@@ -18,7 +18,7 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
-from .utils import generate_ulid
+from .utils.ulid_generator import generate_ulid
 
 
 class ULIDField(models.CharField):
