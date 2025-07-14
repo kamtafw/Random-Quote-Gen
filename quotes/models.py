@@ -14,6 +14,7 @@ class Quote(ULIDModel):
     author = models.CharField(max_length=100, blank=True)
     source = models.CharField(max_length=100, blank=True)
     tags = models.ManyToManyField(Tag, blank=True, related_name="quotes")
+    is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
 

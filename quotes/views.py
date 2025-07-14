@@ -3,6 +3,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from django.http import HttpResponse
+from django.utils.decorators import method_decorator
+from django_ratelimit.decorators import ratelimit
 from django_filters.rest_framework import DjangoFilterBackend
 
 import random
@@ -29,6 +31,10 @@ class QuoteListCreateView(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = QuoteFilter
 
+    @method_decorator(ratelimit(key="ip", rate="3/m", method="POST"))
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
 
 class QuoteRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Quote.objects.all()
@@ -37,7 +43,7 @@ class QuoteRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(["GET"])
 def random_quote_view(request):
-    quote_ids = list(Quote.objects.values_list("id", flat=True))
+    quote_ids = list(Quote.objects.filter(is_approved=True).values_list("id", flat=True))
     if not quote_ids:
         return Response({"error": "No quotes available"}, status=404)
 

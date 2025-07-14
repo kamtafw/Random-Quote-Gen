@@ -1,8 +1,7 @@
-import ulid
 from django.core.management.base import BaseCommand
 
-from ...utils import generate_ulid
-from quotes.models import Quote,Tag
+from ...utils.ulid_generator import generate_ulid
+from quotes.models import Quote, Tag
 
 QUOTES = [
     {
@@ -105,7 +104,7 @@ class Command(BaseCommand):
         created, skipped = 0, 0
 
         for q in QUOTES:
-            tags_data = q.pop('tags',[])
+            tags_data = q.pop("tags", [])
             obj, was_created = Quote.objects.get_or_create(
                 content=q["content"],
                 defaults={
@@ -118,7 +117,7 @@ class Command(BaseCommand):
             if was_created:
                 tags_objs = []
                 for tag in tags_data:
-                    tags_obj,_ = Tag.objects.get_or_create(name=tag["name"])
+                    tags_obj, _ = Tag.objects.get_or_create(name=tag["name"].title())
                     tags_objs.append(tags_obj)
                 obj.tags.set(tags_objs)
                 created += 1

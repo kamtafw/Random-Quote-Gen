@@ -2,7 +2,6 @@ import os
 import hashlib
 import datetime
 import requests
-import cloudinary.uploader
 
 from io import BytesIO
 from django.conf import settings
@@ -17,21 +16,7 @@ FONT_PATH_META = os.path.join(settings.BASE_DIR, "core", "assets", "Inter-Regula
 UNSPLASH_RANDOM_ENDPOINT = "https://api.unsplash.com/photos/random"
 
 
-def fetch_unsplash_image(category="inspiration"):
-    """
-    Fetch a random image from Unsplash based on the category.
-    """
-    url = f"https://source.unsplash.com/random/1080x1080/?{category}"
-    response = requests.get(url)
-    if response.status_code == 200:
-        try:
-            return Image.open(BytesIO(response.content)).convert("RGB")
-        except Image.UnidentifiedImageError:
-            raise Exception("Fetched content is not a valid image from Unsplash")
-    raise requests.HTTPError(f"Failed to fetch image from Unsplash: {response.status_code}")
-
-
-def fetch_unsplash_image_from_api(query="inspiration"):
+def fetch_unsplash_image(query="inspiration"):
     headers = {
         "Accept-Version": "v1",
         "Authorization": f"Client-ID {settings.UNSPLASH_ACCESS_KEY}",
@@ -96,53 +81,6 @@ def draw_multiline_text(draw, text, font, position, max_width, line_height, fill
         y_text += line_height
 
 
-def generate_daily_image():
-    quote_ids = list(Quote.objects.values_list("id", flat=True))
-    if not quote_ids:
-        return None, None
-
-    # Choose daily quote
-    today = datetime.date.today().isoformat()
-    hash_input = f"{today}".encode("utf-8")
-    hash_value = hashlib.sha256(hash_input).hexdigest()
-    index = int(hash_value, 16) % len(quote_ids)
-    quote = Quote.objects.filter(id=quote_ids[index]).first()
-    if not quote:
-        return None, None
-
-    # Create image
-    image = Image.new("RGB", (1080, 1080), (245, 245, 245))
-    draw = ImageDraw.Draw(image)
-
-    # Load fonts
-    quote_font = ImageFont.truetype(FONT_PATH_TITLE, 48)
-    author_font = ImageFont.truetype(FONT_PATH_META, 32)
-    footer_font = ImageFont.truetype(FONT_PATH_META, 28)
-
-    # Quote text
-    quote_text = quote.content.strip()
-    author_text = f'- {quote.author or "Anonymous"}'
-    footer_text = "#DevRevTiva"
-
-    margin_x = 100
-    margin_y = 150
-    max_width = image.width - 2 * margin_x
-
-    # Draw quote text
-    draw_multiline_text(draw, quote_text, quote_font, (margin_x, margin_y), max_width, 60, fill=(20, 20, 20))
-    # Draw author text
-    draw.text((margin_x, 850), author_text, font=author_font, fill=(70, 70, 70))
-    # Draw footer text
-    draw.text((margin_x, 950), footer_text, font=footer_font, fill=(100, 100, 100))
-
-    # Save to BytesIO
-    image_io = BytesIO()
-    image.save(image_io, format="PNG")
-    image_io.seek(0)
-
-    return quote, image_io
-
-
 def generate_daily_image_with_unsplash():
     """
     Generate a daily quote image with a background from Unsplash.
@@ -164,7 +102,7 @@ def generate_daily_image_with_unsplash():
     tag = tags[0] if tags else "inspiration"
 
     # Fetch Unsplash image
-    bg_image, attribution = fetch_unsplash_image_from_api(tag)
+    bg_image, attribution = fetch_unsplash_image(tag)
 
     # Create a new image with the Unsplash background
     bg_image = bg_image.resize((1080, 1080))
