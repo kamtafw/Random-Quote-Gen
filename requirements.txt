@@ -13,6 +13,8 @@ gunicorn==23.0.0
 idna==3.10
 packaging==25.0
 pillow==11.3.0
+psycopg==3.2.9
+psycopg-binary==3.2.9
 requests==2.32.4
 six==1.17.0
 sqlparse==0.5.3
