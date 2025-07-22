@@ -33,6 +33,9 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["random-quote-gen-production-856e.up.railway.app", "127.0.0.1:8000", "localhost"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://random-quote-gen-production-856e.up.railway.app",
+]
 
 
 # Application definition
@@ -96,16 +99,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 #     }
 # }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("PGDATABASE"),
-        "USER": env("PGUSER"),
-        "PASSWORD": env("PGPASSWORD"),
-        "HOST": env("PGHOST"),
-        "PORT": env("PGPORT"),
-    }
-}
+DATABASES = {"default": dj_database_url.config(default=env("DATABASE_URL"))}
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": env("PGDATABASE"),
+#         "USER": env("PGUSER"),
+#         "PASSWORD": env("PGPASSWORD"),
+#         "HOST": env("PGHOST"),
+#         "PORT": env("PGPORT"),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
