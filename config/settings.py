@@ -37,6 +37,11 @@ CSRF_TRUSTED_ORIGINS = [
     "https://random-quote-gen-production-856e.up.railway.app",
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
+
 
 # Application definition
 
@@ -49,6 +54,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third-party
     "cloudinary",
+    "corsheaders",
     "rest_framework",
     "django_filters",
     # local
@@ -57,6 +63,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
