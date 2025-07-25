@@ -1,0 +1,43 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	scroll-behavior: smooth;
+}
+
+@layer base {
+	html {
+		scroll-padding-top: 100px;
+	}
+}
+
+@layer utilities {
+	@keyframes fade-in {
+		from {
+			opacity: 0;
+			transform: scale(0.95);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	.animate-fade-in {
+		animation: fade-in 0.3s ease-out forwards;
+	}
+}
+
+body {
+	font-family: "Palanquin", sans-serif;
+	background-color: #121212;
+	color: #ffffff;
+	line-height: 1.6;
+}
