@@ -22,7 +22,7 @@ from PIL import Image, ImageDraw, ImageFont
 from .models import Quote, Tag
 from .filters import QuoteFilter
 from .serializers import QuoteSerializer, TagSerializer
-from core.utils.image_generator import generate_daily_image_with_unsplash
+from core.utils.image_generator import generate_daily_quote, generate_daily_image
 
 
 class QuoteListCreateView(generics.ListCreateAPIView):
@@ -57,22 +57,14 @@ def random_quote_view(request):
 def daily_quote_view(request):
     """
     API view to get the daily quote.
-    Returns a quote selected deterministically based on the current date.
+    Returns a quote selected deterministically based on the current date and fixed quote IDs.
     """
-    quote_ids = list(Quote.objects.values_list("id", flat=True))
-    if not quote_ids:
+
+    daily_quote = generate_daily_quote()
+    if daily_quote is None:
         return Response({"error": "No quotes available"}, status=404)
 
-    # Selects a deterministic daily quote by hashing the current date
-    today = datetime.date.today().isoformat()
-    hash_input = f"{today}".encode("utf-8")
-    hash_value = hashlib.md5(hash_input).hexdigest()
-    index = int(hash_value, 16) % len(quote_ids)
-
-    quote = Quote.objects.filter(id=quote_ids[index]).first()
-    if not quote:
-        return Response({"error": "Quote not found"}, status=404)
-    serializer = QuoteSerializer(quote)
+    serializer = QuoteSerializer(daily_quote)
     return Response(serializer.data)
 
 
@@ -112,18 +104,9 @@ def daily_quote_image_view(request):
     API view to get the image of the daily quote.
     Returns a PNG image containing the daily quote text and author.
     """
-    quote_ids = list(Quote.objects.values_list("id", flat=True))
-    if not quote_ids:
+    quote = generate_daily_quote()
+    if quote is None:
         return Response({"error": "No quotes available"}, status=404)
-
-    today = datetime.date.today().isoformat()
-    hash_input = f"{today}".encode("utf-8")
-    hash_value = hashlib.md5(hash_input).hexdigest()
-    index = int(hash_value, 16) % len(quote_ids)
-
-    quote = Quote.objects.filter(id=quote_ids[index]).first()
-    if not quote:
-        return Response({"error": "Quote not found"}, status=404)
 
     # Create an image with the quote text
     image = Image.new("RGB", (800, 600), color=(255, 255, 255))
@@ -148,7 +131,7 @@ def daily_quote_image_view(request):
 
 
 @api_view(["GET"])
-def daily_quote_image_upload_view(request):
+def daily_image_view(request):
     """
     API view to upload the image of the daily quote.
     """
@@ -162,7 +145,7 @@ def daily_quote_image_upload_view(request):
     except NotFound:
         pass  # Proceed to generate new one
 
-    quote, buffer = generate_daily_image_with_unsplash()
+    quote, buffer = generate_daily_image()
     if not quote:
         return Response({"detail": "No quotes available."}, status=500)
 

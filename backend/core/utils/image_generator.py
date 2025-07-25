@@ -7,13 +7,41 @@ from io import BytesIO
 from django.conf import settings
 from PIL import Image, ImageDraw, ImageFont
 
-from quotes.models import Quote
+from quotes.models import Quote,DailyQuoteCache
 
 
 FONT_PATH_TITLE = os.path.join(settings.BASE_DIR, "core", "assets", "PlayfairDisplay-Regular.ttf")
 FONT_PATH_META = os.path.join(settings.BASE_DIR, "core", "assets", "Inter-Regular.ttf")
 
 UNSPLASH_RANDOM_ENDPOINT = "https://api.unsplash.com/photos/random"
+
+def generate_daily_quote():
+    """
+    Generates a daily quote based on the current date.
+    This function is used to ensure that the same quote is returned for the current date.
+    Stable even if you add/remove quotes.
+    """
+    today = datetime.date.today().isoformat()
+
+    cached = DailyQuoteCache.objects.filter(date=today).first()
+    if cached and cached.quote:
+        return cached.quote
+
+    quotes = Quote.objects.filter(is_approved=True).order_by("created_at").all()
+    if not quotes.exists():
+        return None
+
+    today_hash = hashlib.md5(today.encode("utf-8")).hexdigest()
+    quote_ids = sorted(str(q.id) for q in quotes)
+    index = int(today_hash, 16) % len(quote_ids)
+    selected_id = quote_ids[index]
+
+    quote = Quote.objects.filter(id=selected_id).first()
+    if not quote:
+        return None
+
+    DailyQuoteCache.objects.create(date=today, quote=quote)
+    return quote
 
 
 def fetch_unsplash_image(query="inspiration"):
@@ -81,20 +109,11 @@ def draw_multiline_text(draw, text, font, position, max_width, line_height, fill
         y_text += line_height
 
 
-def generate_daily_image_with_unsplash():
+def generate_daily_image():
     """
     Generate a daily quote image with a background from Unsplash.
     """
-    quote_ids = list(Quote.objects.values_list("id", flat=True))
-    if not quote_ids:
-        return None, None, None
-
-    today = datetime.date.today().isoformat()
-    hash_input = f"{today}".encode("utf-8")
-    hash_value = hashlib.md5(hash_input).hexdigest()
-    index = int(hash_value, 16) % len(quote_ids)
-
-    quote = Quote.objects.filter(id=quote_ids[index]).first()
+    quote = generate_daily_quote()
     if not quote:
         return None, None, None
 

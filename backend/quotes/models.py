@@ -26,3 +26,8 @@ class Quote(ULIDModel):
             content = content[:50] + "..."
 
         return f"{author or 'Unknown'}: {content}"
+
+
+class DailyQuoteCache(ULIDModel):
+    date = models.DateField(unique=True)
+    quote = models.ForeignKey(Quote, null=True, on_delete=models.SET_NULL)
