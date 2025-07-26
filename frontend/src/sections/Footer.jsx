@@ -7,7 +7,7 @@ const Footer = () => {
 			<div className="max-w-[110rem] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
 				{/* Logo & Tagline */}
 				<div className="text-center md:text-left">
-					<h3 className="flex text-2xl font-montserrat text-white">RANDOM <span className="font-bold">Quote</span> <QuoteIcon /></h3>
+					<h3 className="flex justify-center md:justify-start text-2xl font-montserrat text-white">RANDOM <span className="font-bold">Quote</span> <QuoteIcon /></h3>
 					<p className="text-white/60 text-sm mt-2 max-w-xs">
 						A daily dose of thoughts, wisdom, and wit — curated just for you.
 					</p>
