@@ -1,4 +1,5 @@
 import { FaGithub, FaTwitter, FaLinkedin, FaHeart } from "react-icons/fa"
+import QuoteIcon from "../components/QuoteIcon"
 
 const Footer = () => {
 	return (
@@ -6,7 +7,7 @@ const Footer = () => {
 			<div className="max-w-[110rem] mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
 				{/* Logo & Tagline */}
 				<div className="text-center md:text-left">
-					<h3 className="text-2xl font-montserrat text-white">RANDOM <span className="font-bold">Quote</span> 💭</h3>
+					<h3 className="flex text-2xl font-montserrat text-white">RANDOM <span className="font-bold">Quote</span> <QuoteIcon /></h3>
 					<p className="text-white/60 text-sm mt-2 max-w-xs">
 						A daily dose of thoughts, wisdom, and wit — curated just for you.
 					</p>
@@ -69,7 +70,7 @@ const Footer = () => {
 
 			{/* Bottom Bar */}
 			<div className="text-center text-xs text-white/40">
-				© {new Date().getFullYear()} RANDOM <span className="font-semibold">Quote</span>. Built with{" "}
+				© {new Date().getFullYear()} RANDOM<span className="font-semibold">Quote</span>. Built with{" "}
 				<span className="text-pink-400">
 					<FaHeart className="inline mb-[2px]" />
 				</span>{" "}

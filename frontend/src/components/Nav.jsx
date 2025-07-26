@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { navLinks } from "../constants"
 import { Menu, X } from "lucide-react"
+import QuoteIcon from "./QuoteIcon"
 
 const Nav = () => {
 	const [hamburgerOpen, setHamburgerOpen] = useState(false)
@@ -8,10 +9,11 @@ const Nav = () => {
 	return (
 		<header className="fixed top-0 z-50 w-full bg-[#1e1e1e] backdrop-blur-sm h-28">
 			<div className="p-8 flex items-center justify-between w-full mx-auto shadow-2xl">
-				<div className="text-left text-2xl md:text-3xl text-gray-300 tracking-widest font-light border-t-4 w-fit">
+				<div className="flex text-left text-2xl md:text-3xl text-gray-300 tracking-widest font-montserrat border-t-4 w-fit">
 					<a href="/">
-						RANDOM <span className="font-bold text-stone-500">Quote</span>
+						RANDOM<span className="font-bold text-stone-500">Quote</span>
 					</a>
+					<QuoteIcon />
 				</div>
 
 				{/* Desktop Menu */}
