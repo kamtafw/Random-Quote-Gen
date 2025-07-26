@@ -1,3 +1,5 @@
+import toast from "react-hot-toast"
+
 const QuoteCard = ({ content, author, tags ,onClick}) => {
 	return (
 		<div onClick={onClick} className="bg-white/10 p-4 rounded-xl backdrop-blur-md shadow-lg hover:scale-[1.02] transition-all duration-300 border border-white/10">
@@ -6,7 +8,7 @@ const QuoteCard = ({ content, author, tags ,onClick}) => {
 				<span>- {author}</span>
 				<button
 					className="bg-pink-900 hover:bg-pink-950 transition px-4 py-2 rounded-md"
-					onClick={() => alert("Liked!")}
+					onClick={() => toast.success("Quote Liked!")}
 					disabled={true}
 				>
 					Like

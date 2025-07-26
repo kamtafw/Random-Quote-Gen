@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import toast from "react-hot-toast"
 import { FaCopy, FaShareAlt, FaDownload } from "react-icons/fa"
 
 import Spinner from "../components/Spinner"
@@ -6,7 +7,8 @@ import useDailyQuote from "../hooks/useDailyQuote"
 
 const copyToClipboard = (quote) => {
 	navigator.clipboard.writeText(`“${quote.content}” - ${quote.author}`)
-	alert("Quote copied to clipboard!")
+	toast.success("Copied to clipboard!")
+
 }
 
 const shareQuote = (quote) => {
@@ -18,7 +20,7 @@ const shareQuote = (quote) => {
 			url: window.location.href,
 		})
 	} else {
-		alert("Sharing not supported on this device.")
+		toast.error("Sharing not supported on this device.")
 	}
 }
 
@@ -31,25 +33,27 @@ const DailyQuote = () => {
 	const downloadQuoteImage = async () => {
 		if (!imageUrl) return
 
-		try {
-			const response = await fetch(imageUrl)
-			const blob = await response.blob()
+		const download = async () => {
+		const response = await fetch(imageUrl)
+		const blob = await response.blob()
+		const blobUrl = window.URL.createObjectURL(blob)
+		const link = document.createElement("a")
+		link.href = blobUrl
+		link.download = `quote-${new Date().toLocaleDateString()}.png`
+		document.body.appendChild(link)
+		link.click()
+		document.body.removeChild(link)
+		window.URL.revokeObjectURL(blobUrl)
+	}
 
-			const blobUrl = window.URL.createObjectURL(blob)
-			const link = document.createElement("a")
-
-			link.href = blobUrl
-			link.download = `quote-${new Date().toLocaleDateString()}.png`
-			document.body.appendChild(link)
-			link.click()
-			document.body.removeChild(link)
-
-			// Optional: cleanup the blob URL
-			window.URL.revokeObjectURL(blobUrl)
-		} catch (err) {
-			console.error("Failed to download image:", err)
-			alert("Could not download the image. Please try again later.")
+	toast.promise(
+		download(),
+		{
+			loading: "Downloading...",
+			success: "Image downloaded!",
+			error: "Failed to download image.",
 		}
+	)
 	}
 
 	useEffect(() => {
@@ -78,6 +82,11 @@ const DailyQuote = () => {
 
 		return () => clearTimeout(timeoutRef.current)
 	}, [quote?.content])
+
+	const handleClick = (e, fn) => {
+		fn()
+		e.currentTarget.blur()
+	}
 
 	return (
 		<section
@@ -132,20 +141,20 @@ const DailyQuote = () => {
 
 						<div className="flex justify-center gap-4 flex-wrap mt-4">
 							<button
-								onClick={() => copyToClipboard(quote)}
-								className="flex items-center gap-2 bg-white/10 text-sm md:text-base hover:bg-white/20 px-4 py-2 rounded-lg transition"
+								onClick={(e) => handleClick(e, () => copyToClipboard(quote))}
+								className="flex items-center gap-2 bg-white/10 text-sm md:text-base hover:bg-white/20 px-4 py-2 rounded-lg transition focus:outline-none"
 							>
 								<FaCopy /> Copy
 							</button>
 							<button
-								onClick={() => shareQuote(quote)}
-								className="flex items-center gap-2 bg-white/10 text-sm md:text-base hover:bg-white/20 px-4 py-2 rounded-lg transition"
+								onClick={(e) => handleClick(e, () => shareQuote(quote))}
+								className="flex items-center gap-2 bg-white/10 text-sm md:text-base hover:bg-white/20 px-4 py-2 rounded-lg transition focus:outline-none"
 							>
 								<FaShareAlt /> Share
 							</button>
 							<button
-								onClick={downloadQuoteImage}
-								className="flex items-center gap-2 bg-white/10 text-sm md:text-base hover:bg-white/20 px-4 py-2 rounded-lg transition"
+								onClick={(e) => handleClick(e, () => downloadQuoteImage())}
+								className="flex items-center gap-2 bg-white/10 text-sm md:text-base hover:bg-white/20 px-4 py-2 rounded-lg transition focus:outline-none"
 							>
 								<FaDownload /> Download
 							</button>

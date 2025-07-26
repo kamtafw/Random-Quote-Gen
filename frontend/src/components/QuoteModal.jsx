@@ -19,26 +19,26 @@ const QuoteModal = ({ isOpen, onClose, quote }) => {
 			className="absolute inset-0 bg-black/50 flex m-4 px-4 justify-center items-center z-30"
 			onClick={handleBackdropClick}
 		>
-			<div className="relative w-full max-w-2xl bg-white/5 backdrop-blur-lg border border-white/10 text-white p-8 rounded-2xl shadow-2xl animate-fade-in scale-[1] transition-transform duration-300">
+			<div className="relative w-full max-w-2xl bg-white/5 backdrop-blur-lg border border-white/10 text-white p-3 rounded-2xl shadow-2xl animate-fade-in scale-[1] transition-transform duration-300">
 				{/* Close Button */}
-				<button
+				{/* <button
 					onClick={onClose}
 					className="absolute top-4 right-4 text-white/70 hover:text-white text-2xl"
 				>
 					&times;
-				</button>
+				</button> */}
 
 				{/* Quote Content */}
-				<div className="text-center mb-8 relative">
-					<FaQuoteLeft className="text-pink-500 text-2xl inline-block mr-2 -mt-2" />
-					<p className="text-lg md:text-2xl font-montserrat italic inline-block max-w-3xl">
+				<div className="text-center mb-4 relative">
+					<FaQuoteLeft className="text-pink-500 text-base md:text-lg inline-block mr-2 -mt-2"/>
+					<p className="text-base md:text-xl font-montserrat font-semibold inline-block max-w-3xl">
 						{quote.content}
 					</p>
-					<FaQuoteRight className="text-pink-500 text-2xl inline-block ml-2 -mt-2" />
+					<FaQuoteRight className="text-pink-500 text-base md:text-lg inline-block ml-2 -mt-2" />
 				</div>
 
 				{/* Author */}
-				<p className="text-right text-white/80 text-base font-palanquin mb-4">
+				<p className="text-right text-white/80 text-sm md:text-base font-palanquin mb-4">
 					— {quote.author || "Unknown"}
 				</p>
 
@@ -65,9 +65,9 @@ const QuoteModal = ({ isOpen, onClose, quote }) => {
 				</div>
 
 				{/* Optional Source */}
-				{quote.source?.trim() && (
+				{/* {quote.source?.trim() && (
 					<p className="mt-4 text-sm text-white/60 italic text-right">Source: {quote.source}</p>
-				)}
+				)} */}
 			</div>
 		</div>
 	)

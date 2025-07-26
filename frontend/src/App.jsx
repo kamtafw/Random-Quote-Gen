@@ -5,7 +5,7 @@ import { DailyQuote, Quotes, Subscribe, SuggestQuote, Footer } from "./sections"
 const App = () => {
 	return (
 		<>
-			<Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+			<Toaster position='top-center' toastOptions={{ duration: 4000 }} />
 			<main className="min-h-screen">
 				<Nav />
 				<section className="mt-28 flex flex-col lg:grid grid-cols-1 lg:grid-cols-2 auto-rows-auto">

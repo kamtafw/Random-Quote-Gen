@@ -87,7 +87,7 @@ const Quotes = () => {
 			) : (
 				<>
 					{filteredQuotes.length === 0 ? (
-						<p className="text-center text-white/70 mt-16 font-montserrat text-2xl min-h-28">
+						<p className="text-center text-white/70 mt-16 font-montserrat text-lg md:text-xl min-h-[180px]">
 							No quotes found 😔
 						</p>
 					) : (

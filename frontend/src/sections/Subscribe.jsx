@@ -17,7 +17,7 @@ const Subscribe = () => {
 	return (
 		<section
 			id="subscribe"
-			className="bg-gradient-to-r from-[#1f1f1f] to-[#131313] p-6 md:p-12 text-white text-center min-h-full"
+			className="bg-gradient-to-r from-[#1f1f1f] to-[#131313] flex flex-col items-center justify-center p-6 md:p-12 text-white text-center min-h-full"
 		>
 			<h2 className="text-2xl md:text-4xl font-montserrat font-semibold mb-6">📬 Stay Inspired</h2>
 			<p className="text-white/70 max-w-2xl mx-auto mb-8 font-palanquin text-sm md:text-base">

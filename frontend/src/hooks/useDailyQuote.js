@@ -31,7 +31,7 @@ const useDailyQuote = () => {
 		setError(null)
 
 		try {
-			const response = await api.get("/quotes/daily/image-upload/")
+			const response = await api.get("/quotes/daily/image/")
 			setImageUrl(response.data.image_url)
 		} catch (error) {
 			setError("Could not load today's quote image. Please try again later.")
